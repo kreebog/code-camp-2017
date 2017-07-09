@@ -1,0 +1,26 @@
+{
+  "name": "code-camp-2017",
+  "version": "1.0.0",
+  "description": "Code Camp 2017",
+  "main": "index.js",
+    "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kreebog/code-camp-2017.git"
+  },
+  "author": "James Dean <kreebog@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kreebog/code-camp-2017/issues"
+  },
+  "homepage": "https://github.com/kreebog/code-camp-2017#readme",
+  "dependencies": {
+    "botkit": "^0.5.5"
+  },
+  "devDependencies": {
+    "eslint": "^4.2.0",
+    "eslint-config-google": "^0.9.1"
+  }
+}
