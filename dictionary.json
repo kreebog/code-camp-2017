@@ -1,0 +1,16 @@
+{
+    "greetings": {
+        "standard": ["hi", "hello", "hey"], 
+        "formal": ["good morning", "good day", "good evening", "good afternoon", "greetings"],
+        "cool": ["sup, yo"],
+        "country": ["howdy", "howdy partner", "howdy pardner"],
+        "rude": ""
+    },
+    "dismissals": {
+        "standard": ["bye", "goodbye", "good-bye", "see you", "see you later"],
+        "formal": ["farewell", "until we meet again", "best wishes", "peace be with you"],
+        "cool": ["cya", "l8r", "cul8r", "peace", "peace out", "i'm outta here", "i'm out of here"],
+        "rude": ["bye felicia", "talk to the hand", "go away", "you suck"],
+        "retro": ["catch you on the flip side", "stay frosty"]
+    }
+}

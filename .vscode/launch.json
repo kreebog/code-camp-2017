@@ -10,7 +10,7 @@
             "name": "Launch Roofus",
             "program": "${workspaceRoot}\\index.js",
             "env": {
-                "token": "xoxb-209681162597-DhtCsiBbqyam3j58y3eWjA0C"
+                "token": "xoxb-209681162597-ZYYPLuq0Lglf4LPSY36C1HVO"
             }
         }
     ]

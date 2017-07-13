@@ -1,9 +1,5 @@
 /* Roofus - A Slack Chat Bot for Code Camp 2017 */
 
-// required modules
-var Botkit = require('botkit');
-var os = require('os');
-
 // check for a Slack API Token
 if (!process.env.token) {
     console.log('Error: Specify token in environment');
@@ -12,12 +8,36 @@ if (!process.env.token) {
     console.log('Roofus will be using token [' + process.env.token + ']');
 }
 
+// required modules
+var Botkit = require('botkit');
+var os = require('os');
+var dictionary = require('./dictionary.json');
 
 // set up controller and bot
-var controller = Botkit.slackbot({debug: true});
+// var controller = Botkit.slackbot({debug: true});
+var controller = Botkit.slackbot();
 var bot = controller.spawn({token: process.env.token}).startRTM();
 
-controller.hears(['hello', 'hi'], 'message,direct_message', function(bot, message) {
+controller.hears('', 'message,direct_message,mention,ambient', function(bot, message) {
+    console.log('Message: ' + message.ts, message.channel, message.user, message.text);
+
+    // get user name, if possible
+    controller.storage.users.get(message.user, function(err, user) {
+    7    if (!user || !user.name) {
+            bot.api.users.info({user: message.user}, function(err, response) {
+                controller.storage.users.save(response.user, function(err) {
+                    if (err) {
+                        console.log('Error Saving User:' + err);
+                    } else {
+                        console.log('User Stored: ' + response.user.name);
+                    }
+                });
+            });
+        }
+    });
+});
+
+controller.hears('[hi, hello, hey there]', 'message,direct_message,mention,ambient', function(bot, message) {
     bot.api.reactions.add({
         timestamp: message.ts,
         channel: message.channel,
@@ -32,10 +52,20 @@ controller.hears(['hello', 'hi'], 'message,direct_message', function(bot, messag
         if (user && user.name) {
             bot.reply(message, 'Hello ' + user.name + '!!');
         } else {
-            bot.reply(message, 'Hello.');
+            bot.api.users.info({user: message.user}, function(err, response) {
+                controller.storage.users.save(response.user, function(err) {
+                    if (err) {
+                        console.log('Error Saving User:' + err);
+                        bot.reply(message, 'Hey there.');
+                    } else {
+                        bot.reply(message, 'Hello ' + response.user.name + '!!');
+                    }
+                });
+            });
         }
     });
 });
+
 
 controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your name'], 'direct_message,direct_mention,mention', function(bot, message) {
     var hostname = os.hostname();
@@ -47,7 +77,19 @@ controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your na
 });
 
 /**
- * 
+ * @param {*} values
+ * @param {*} text
+ * @return {boolean}
+ */
+function isCategory(values, text) {
+    if (text == 'hi') {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/**
  * @param {*} uptime 
  * @return {*}
  */
