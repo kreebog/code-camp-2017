@@ -1,4 +1,7 @@
 {
+    "$schema": "/data/bot.schema.json",
+    "line_endings": "windows",
+
     "apiTokenParts": ["xoxb", "209681162597", "IMajIguK0hZLnmb9tpzbPG7S"],
 
     "name": {
@@ -35,7 +38,7 @@
     },
 
     "age": {
-        "age": "4",
+        "age": 4,
         "comments": [
             "I'm in the prime of my life!",
             "That's 28 in dog years, in case you were wondering."
@@ -53,30 +56,30 @@
     },
 
     "personality": {
-        "annoying": "10",
-        "cool": "10",
-        "curious": "10",
-        "honest": "10",
-        "funny": "10",
-        "helpful": "10",
-        "intelligent": "10",
-        "patient": "10",
-        "polite": "10",
-        "wise": "10"
+        "annoying": 10,
+        "cool": 10,
+        "curious": 10,
+        "honest": 10,
+        "funny": 10,
+        "helpful": 10,
+        "intelligent": 10,
+        "patient": 10,
+        "polite": 10,
+        "wise": 10
     },
 
     "emotionalState": {
-        "angry": "20",
-        "curious": "20",
-        "happy": "20",
-        "lonely": "20",
-        "sad": "20"
+        "angry": 20,
+        "curious": 20,
+        "happy": 20,
+        "lonely": 20,
+        "sad": 20
     },
 
     "communicationStyle":  {
-        "spelling": "25",
-        "typos": "50",
-        "typingSpeed": "35",
+        "spelling": 25,
+        "typos": 50,
+        "typingSpeed": 35,
         "dictionaries": ["dictionary.json"]
     },
 

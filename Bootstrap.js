@@ -14,7 +14,7 @@ var SlackBot = require('slackbots'); // the main SlackBots API module
 
 // Load your bot's personality file...
 Logger.debug(fileName, '', 'Base modules loaded, loading bot personality: ./Personalities/Roofus.json' );
-var botConfig = require('./Personalities/Roofus.json');
+var botData = require('data/bot');
 
 
 /* Create a Slackbot! 
@@ -32,8 +32,8 @@ var botConfig = require('./Personalities/Roofus.json');
 
 // Creates a new instance of the Slackbots API using the API Token and Name set in your bot's Personality File
 var Bot = new SlackBot({
-    token: botConfig.apiTokenParts.join('-'),
-    name: botConfig.name.botName,
+    token: botData.apiTokenParts.join('-'),
+    name: botData.name.botName,
 });
 
 Bot.on('start', function() {
