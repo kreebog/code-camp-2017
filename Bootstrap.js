@@ -1,19 +1,21 @@
 'use strict';
 
-// Load required modules
-var FileSystem = require('fs'); // file system - allows reading and writing files
-var SlackBot = require('slackbots'); // the main SlackBots API module
-var Logger = require('./logger.js'); // simple logging wrapper
-
 // Set some basic variables
 const fileName = 'Bootstrap.js'; // helpful for using with logging functions!
 
-Logger.debug(fileName, '', 'Base modules loaded & Logger initialized.' );
+// load the logger
+var Logger = require('./LogHelper.js'); // simple logging wrapper
+
+// Load required modules
+Logger.debug(fileName, '', 'LogHelper initialized, loading base modules...');
+// var FileSystem = require('fs'); // file system - allows reading and writing files
+var SlackBot = require('slackbots'); // the main SlackBots API module
+// var CodeCamp = require('./CodeCamp'); // load the Code Camp Module
 
 // Load your bot's personality file...
-Logger.debug(fileName, '', 'Loading Personality: ./Personalities/Roofus.json' );
-var roofus = require('./Personalities/Roofus.json');
-Logger.debug(fileName, '', 'Personality loaded.' );
+Logger.debug(fileName, '', 'Base modules loaded, loading bot personality: ./Personalities/Roofus.json' );
+var botConfig = require('./Personalities/Roofus.json');
+
 
 /* Create a Slackbot! 
 *
@@ -28,24 +30,53 @@ Logger.debug(fileName, '', 'Personality loaded.' );
 *      7) Describe your bot's purpose
 */ 
 
-// Creates a new instance of the Slackbots API using the API Token and Name 
-// set in your bot's Personality File
-var roofus = new SlackBot({
-    token: roofus.config.apiKeyParts.join('-'),
-    name: roofus.name.botName,
+// Creates a new instance of the Slackbots API using the API Token and Name set in your bot's Personality File
+var Bot = new SlackBot({
+    token: botConfig.apiTokenParts.join('-'),
+    name: botConfig.name.botName,
 });
 
+Bot.on('start', function() {
+    Bot.postMessageToChannel('jd-testing', 'I\'m here!');
+});
+
+Bot.on('message', function(data ) {
+    Logger.debug(fileName, 'Bot.on(message)', 'Message recieved.  Type:  ' + data.type);
+
+    switch (data.type) {
+        case 'hello':
+            Logger.info(fileName, 'Bot.on(message)', 'Successfully connected to Slack!');
+            break;
+        case 'user_typing':
+            break;
+        case 'message':
+            break;
+        case 'reconnect_url':
+            // experimental, do not use
+            break;
+        case 'presence_change':
+            break;
+        case 'error':
+            Logger.error(fileName, 'Bot.on(message)', 'Slack Error Message: ' + data.text);
+        default:
+            Logger.debug(fileName, 'Bot.on(message)', 'Unhandled Message Type: ' + data.type);
+            break;
+    }
+});
+
+/*
+var lastChannel = ''; // Used to remember the last channel a message came from
+
 // basic message handler to pass over to CodeCamp module
-var lastChannel = '';
-roofus.on('message', function(data) {
-    if (data.type == 'message' && data.username != 'test') {
+Bot.on('message', function(data) {
+    if (data.type == 'message' && data.username != botConfig.name.botName) {
         var lowerMsg = data.text.toLowerCase();
 
         if (lowerMsg == 'shutdown secret') {
             process.exit(0);
         }
 
-        roofus.postMessage(data.channel, CodeCampModule.messageReceived(lowerMsg));
+        Bot.postMessage(data.channel, CodeCamp.messageReceived(lowerMsg));
         lastChannel = data.channel;
 
         // reset the boredom timer
@@ -56,7 +87,7 @@ roofus.on('message', function(data) {
 // timer for boredom detection
 var boredomTimer = null;
 function boredomHandler() {
-    roofus.postMessage(lastChannel, CodeCampModule.youAreBored());
+    Bot.postMessage(lastChannel, CodeCamp.youAreBored());
 
     boredomTimer = setTimeout(boredomHandler, 8000);
 }
@@ -77,3 +108,4 @@ function createBoredomTimer() {
 // });
 
 // process.exit(0);
+*/

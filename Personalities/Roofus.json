@@ -1,7 +1,5 @@
 {
-    "config": {
-        "apiTokenParts": ["xoxb", "209681162597", "IMajIguK0hZLnmb9tpzbPG7S"]
-    },
+    "apiTokenParts": ["xoxb", "209681162597", "IMajIguK0hZLnmb9tpzbPG7S"],
 
     "name": {
         "botName": "roofus",
