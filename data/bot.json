@@ -1,7 +1,4 @@
 {
-    "$schema": "/data/bot.schema.json",
-    "line_endings": "windows",
-
     "apiTokenParts": ["xoxb", "209681162597", "IMajIguK0hZLnmb9tpzbPG7S"],
 
     "name": {
@@ -83,6 +80,11 @@
         "dictionaries": ["dictionary.json"]
     },
 
+    "greetingResponses": [
+        "Back at ya, ${user}!",
+        "Hey there, ${user}."
+    ],
+
     "joinPhrases": {
         "login": "Wubalubbadubdub!  My name is Roofus, where's the grub?",
         "relogin": "I'm back, baby!",
@@ -137,5 +139,15 @@
             "*whimper*",
             "*whine*"
         ]
+    },
+
+    "history": {
+        "lastConnect": "",
+        "lastChannel": "",
+        "lastMention": {
+            "user": "",
+            "message": "",
+            "sentiment": ""
+        }
     }
 }

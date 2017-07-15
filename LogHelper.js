@@ -1,5 +1,5 @@
 'use strict';
-var debugEnabled = true;
+var debugEnabled = false;
 
 
 /**
@@ -73,6 +73,6 @@ module.exports = {
      */
     toggleDebug: function() {
         debugEnabled = !debugEnabled;
-        this.info('logger.js', 'toggleDebug()', 'Debug Logging ' + (debugEnabled ? 'Enabled' : 'Disabled'));
+        this.info('LogHelper.js', 'toggleDebug()', 'Debug Logging ' + (debugEnabled ? 'Enabled' : 'Disabled'));
     },
 };
