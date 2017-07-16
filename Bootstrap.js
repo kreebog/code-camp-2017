@@ -62,11 +62,13 @@ Bot.on('message', function(data) {
     var channel = '';
     var message = '';
 
-    Logger.debug(sourceFile, 'Bot.on(message)', 'Message recieved.  Type: ' + data.type);
+    Logger.debug(sourceFile, 'Bot.on(message)', 'Message received.  Type: ' + data.type);
 
     // get the user's name
     if (data.user) {
         user = getNameFromId('users', slackUsers, data.user);
+    } else if (data.username) {
+        user = data.username;
     }
 
     // bail out if message was posted by our bot
@@ -94,16 +96,16 @@ Bot.on('message', function(data) {
             break;
         case 'message':
             // bail out if user is the message sender    
-            if (user != CodeCamp.botData.name.name) {
+            if (user != CodeCamp.botData.name.botName) {
                 if (message == CodeCamp.botData.killPhrase) {
-                    CodeCamp.shutdown_recieved(message, channel, user, Bot);
+                    CodeCamp.shutdown_received(message, channel, user, Bot);
                     setTimeout(shutdown, 2500);
                 }
 
                 if (message.indexOf('?') > 0) {
-                    CodeCamp.question_recieved(message, channel, user, Bot);
+                    CodeCamp.question_received(message, channel, user, Bot);
                 } else {
-                    CodeCamp.message_recieved(data.text, channel, user, Bot);
+                    CodeCamp.message_received(message, channel, user, Bot);
                 }
             }
 

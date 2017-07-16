@@ -12,11 +12,11 @@ var botData = require('./data/bot');
 module.exports = {
     botData: botData,
 
-    message_recieved: function(message, channelName, userName, Slack) {
+    message_received: function(message, channelName, userName, Slack) {
         var response = '';
         botData.history.lastChannel = channelName;
 
-        Logger.debug(sourceFile, 'message_recieved', 'Channel: ' + channelName + ' User: ' + userName + ' Message: ' + message);
+        Logger.debug(sourceFile, 'message_received', 'Channel: ' + channelName + ' User: ' + userName + ' Message: ' + message);
 
         if (message == 'hi') {
             response = phraseAtRandom(botData.responses.greeting);
@@ -28,11 +28,11 @@ module.exports = {
         Slack.postMessageToChannel(channelName, response);
     },
 
-    question_recieved: function(question, channelName, userName, Slack) {
+    question_received: function(question, channelName, userName, Slack) {
         var response = '';
         botData.history.lastChannel = channelName;
 
-        Logger.debug(sourceFile, 'question_recieved', 'Channel: ' + channelName + ' User: ' + userName + ' Question: ' + question);
+        Logger.debug(sourceFile, 'question_received', 'Channel: ' + channelName + ' User: ' + userName + ' Question: ' + question);
 
         if (question.toLowerCase() == 'what time is it?') {
             var date = new Date();
@@ -73,12 +73,12 @@ module.exports = {
         Slack.postMessageToChannel(channelName, response);
     },
 
-    shutdown_recieved: function(message, channelName, userName, Slack) {
+    shutdown_received: function(message, channelName, userName, Slack) {
         var channelName = getLastChannel();
         var response = phraseAtRandom(botData.phrases.leave.logout);
 
         botData.general.postCount++;
-        Slack.postMessageToUser(userName, 'Kill message recieved, I\'m shutting down now.');
+        Slack.postMessageToUser(userName, 'Kill message received, I\'m shutting down now.');
 
         botData.general.postCount++;
         Slack.postMessageToChannel(channelName, response);
@@ -100,7 +100,7 @@ function phraseAtRandom(array) {
 function getLastChannel() {
     var channel = botData.history.lastChannel;
     if (channel == '') {
-        channel = 'general';
+        channel = botData.general.defaultChannel != '' ? botData.general.defaultChannel : 'general';
         botData.history.lastChannel = channel;
     }
 
