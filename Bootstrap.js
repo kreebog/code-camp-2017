@@ -4,8 +4,6 @@ delete require.cache['LogHelper.js'];
 delete require.cache['CodeCamp.js'];
 delete require.cache['data/bot.json'];
 
-
-
 /*
  *
  * ==========================================================
@@ -222,30 +220,3 @@ function shutdown() {
 
     process.exit(0);
 }
-
-/*
-var lastChannel = ''; // Used to remember the last channel a message came from
-
-// basic message handler to pass over to CodeCamp module
-Bot.on('message', function(data) {
-    if (data.type == 'message' && data.username != botConfig.name.botName) {
-        var lowerMsg = data.text.toLowerCase();
-
-        if (lowerMsg == 'shutdown secret') {
-            process.exit(0);
-        }
-
-        Bot.postMessage(data.channel, CodeCamp.messageReceived(lowerMsg));
-        lastChannel = data.channel;
-
-        // reset the boredom timer
-        createBoredomTimer();
-    }
-});
-
-// bot.on('start', function() {
-//     // bot.postMessageToChannel('general', CodeCampModule.botName + ' reporting...');
-// });
-
-// process.exit(0);
-*/

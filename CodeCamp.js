@@ -51,11 +51,8 @@ module.exports = {
 
     bored: function(Slack) {
         var channelName = getLastChannel();
-        var date = new Date();
 
         Logger.debug(sourceFile, 'bored', 'Channel: ' + channelName);
-        
-        botData.history.lastConnect = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
 
         botData.general.postCount++;
         Slack.postMessageToChannel(channelName, phraseAtRandom(botData.phrases.bored));
@@ -64,8 +61,9 @@ module.exports = {
     logged_in: function(Slack) {
         var response = '';
         var channelName = getLastChannel();
+        var date = new Date();
 
-        botData.history.lastConnect = Date.now();
+        botData.history.lastConnect = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
 
         // select a phrase from the bot's data file
         response = phraseAtRandom(botData.phrases.join.login);
