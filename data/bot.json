@@ -16,6 +16,7 @@
 	},
 	"general": {
 		"boredomTimer": 15000,
+		"boredomTimerActive": true,
 		"postCount": 123,
 		"defaultChannel": "stephen_test"
 	},

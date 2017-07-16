@@ -198,6 +198,10 @@ function boredomHandler() {
 }
 
 function createBoredomTimer() {
+    if (false == CodeCamp.botData.general.boredomTimerActive) {
+        return;
+    }
+
     if (null != boredomTimer) {
         clearTimeout(boredomTimer);
         boredomTimer = null;
