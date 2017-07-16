@@ -8,26 +8,28 @@ var Logger = require('./LogHelper.js'); // simple logging wrapper
 
 Logger.debug(sourceFile, '', 'Base modules loaded, loading bot personality: /data/bot.json' );
 var botData = require('./data/bot');
-// var botName = botData.name.botName;
 
 module.exports = {
-    _botData: botData,
+    botData: botData,
 
-    message_recieved: function(message, channelName, userName, slack) {
+    message_recieved: function(message, channelName, userName, Slack) {
         var response = '';
+        botData.history.lastChannel = channelName;
 
         Logger.debug(sourceFile, 'message_recieved', 'Channel: ' + channelName + ' User: ' + userName + ' Message: ' + message);
 
         if (message == 'hi') {
-            response = randomlyPickFromArray(botData.greetingResponses);
+            response = phraseAtRandom(botData.responses.greeting);
         }
 
         response = response.replace('${user}', userName);
-        slack.postMessageToChannel(channelName, response);
+
+        Slack.postMessageToChannel(channelName, response);
     },
 
-    question_recieved: function(question, channelName, userName, slack) {
+    question_recieved: function(question, channelName, userName, Slack) {
         var response = '';
+        botData.history.lastChannel = channelName;
 
         Logger.debug(sourceFile, 'question_recieved', 'Channel: ' + channelName + ' User: ' + userName + ' Question: ' + question);
 
@@ -42,14 +44,48 @@ module.exports = {
             response = '@' + userName + ', are you lost?  Today is ' + days[date.getDay()] + '...';
         }
 
-        slack.postMessageToChannel('jd-testing', response);
+        Slack.postMessageToChannel(channelName, response);
     },
 
+    logged_in: function(Slack) {
+        var response = '';
+        var channelName = botData.history.lastChannel;
 
+        botData.history.lastConnect = Date.now();
 
+        // Make sure there is a channel in case the bot has never posted before!
+        if (channelName == '') {
+            channelName = 'general';
+        }
 
+        // select a phrase from the bot's data file
+        response = phraseAtRandom(botData.phrases.join.login);
+
+        // send message to the server
+        Slack.postMessageToChannel(channelName, response);
+    },
+
+    shutdown_recieved: function(message, channelName, userName, Slack) {
+        var channelName = botData.history.lastChannel;
+        var response = phraseAtRandom(botData.phrases.leave.logout);
+
+        Slack.postMessageToUser(userName, 'Kill message recieved, I\'m shutting down now.');
+
+        // Make sure there is a channel in case the bot has never posted before!
+        if (channelName == '') {
+            channelName = 'general';
+        }
+
+        Slack.postMessageToChannel(channelName, response);
+    },
 };
 
-function randomlyPickFromArray(array) {
+/**
+ * 
+ * @param {*} array 
+ * @return {string} Randomly selected phrase from the given array.
+ */
+function phraseAtRandom(array) {
     return array[Math.floor(Math.random() * array.length)];
 }
+

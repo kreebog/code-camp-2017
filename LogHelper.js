@@ -1,6 +1,6 @@
 'use strict';
-var debugEnabled = false;
 
+var debugEnabled = true; // when true, debug messages will be logged.
 
 /**
  * @return {text} Localized date and time.
@@ -11,6 +11,9 @@ function getTimeStamp() {
 }
 
 module.exports = {
+    // expose debug flag
+    debugEnabled: debugEnabled,
+
     /**
      * Simple console logging function wrapper for INFO messages
      * Info messages are for typical events that should always be logged.
@@ -64,15 +67,5 @@ module.exports = {
         } else {
             console.log('DEBUG : [%s] : [%s] : [%s]', getTimeStamp(), file, error);
         }
-    },
-
-    /**
-     * Toggles logging of Debug messages on and off.
-     * 
-     * Debug logging is enabled by default. 
-     */
-    toggleDebug: function() {
-        debugEnabled = !debugEnabled;
-        this.info('LogHelper.js', 'toggleDebug()', 'Debug Logging ' + (debugEnabled ? 'Enabled' : 'Disabled'));
     },
 };

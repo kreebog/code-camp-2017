@@ -21,11 +21,12 @@ var sourceFile = 'Bootstrap.js'; // helpful for using with logging functions!
 var Logger = require('./LogHelper.js'); // simple logging wrapper
 
 // enable debug logging and make our first log entry!
-Logger.toggleDebug();
+Logger.debugEnabled = true;
 Logger.debug(sourceFile, '', 'LogHelper initialized, loading base modules...');
 
 // Load required modules
-// var FileSystem = require('fs'); // file system - allows reading and writing files
+var fs = require('fs'); // file system - allows reading and writing files
+
 var SlackBot = require('slackbots'); // the main SlackBots API module
 
 // This is the file you'll be working in! 
@@ -37,12 +38,9 @@ var slackChannels = [];
 
 // Creates a new instance of the Slackbots API using the API Token and Name set in your bot's Personality File
 var Bot = new SlackBot({
-    token: CodeCamp._botData.apiTokenParts.join('-'),
-    name: CodeCamp._botData.name.botName,
+    token: CodeCamp.botData.apiTokenParts.join('-'),
+    name: CodeCamp.botData.name.botName,
 });
-
-// give the CodeCamp module a reference to the SlackBot object
-CodeCamp._bot = Bot;
 
 /*  
  * =================================
@@ -51,9 +49,8 @@ CodeCamp._bot = Bot;
  */
 
 Bot.on('start', function() {
-    Bot.postMessageToChannel('jd-testing', CodeCamp._botData.joinPhrases.login);
-    Logger.debug(sourceFile, 'Bot.on(start)', 'Connected to Slack, getting user list.');
-    slackUsers = [];
+    Logger.debug(sourceFile, 'Bot.on(start)', 'Bot has logged in.');
+    CodeCamp.logged_in(Bot);
 });
 
 Bot.on('message', function(data) {
@@ -61,10 +58,10 @@ Bot.on('message', function(data) {
     var channel = '';
     var message = '';
 
-    Logger.debug(sourceFile, 'Bot.on(message)', 'Message recieved.  Type:  ' + data.type);
+    Logger.debug(sourceFile, 'Bot.on(message)', 'Message recieved.  Type: ' + data.type);
 
     // get the user's name
-    if (data.user && data.user != CodeCamp._botData.name.botName) {
+    if (data.user && data.user != CodeCamp.botData.name.botName) {
         user = getUserNameById(data.user);
     }
 
@@ -87,11 +84,20 @@ Bot.on('message', function(data) {
             Logger.info(sourceFile, 'Bot.on(message)', 'Successfully connected to Slack!');
             break;
         case 'message':
-            if (message.indexOf('?') > 0) {
-                CodeCamp.question_recieved(message, channel, user, Bot);
-            } else {
-                CodeCamp.message_recieved(data.text, channel, user, Bot);
+            // bail out if user is the message sender    
+            if (user != CodeCamp.botData.name.name) {
+                if (message == CodeCamp.botData.killPhrase) {
+                    CodeCamp.shutdown_recieved(message, channel, user, Bot);
+                    setTimeout(cleanUpAndExit, 2500);
+                }
+
+                if (message.indexOf('?') > 0) {
+                    CodeCamp.question_recieved(message, channel, user, Bot);
+                } else {
+                    CodeCamp.message_recieved(data.text, channel, user, Bot);
+                }
             }
+
             break;
         case 'presence_change':
             break;
@@ -207,6 +213,18 @@ function getChannelNameById(channelId) {
     }
 
     return channelName;
+}
+
+function cleanUpAndExit() {
+    var data = JSON.stringify(CodeCamp.botData, null, '\t');
+
+    // backup the bot file first...
+    fs.writeFileSync('data/bot.json.bak.' + Date.now(), fs.readFileSync('data/bot.json'));
+
+    // then save the bot data currently in memory
+    fs.writeFileSync('data/bot.updated.json', data);
+
+    process.exit(0);
 }
 
 /*
