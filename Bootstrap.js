@@ -1,5 +1,11 @@
 'use strict';
 
+delete require.cache['LogHelper.js'];
+delete require.cache['CodeCamp.js'];
+delete require.cache['data/bot.json'];
+
+
+
 /*
  *
  * ==========================================================
@@ -61,8 +67,13 @@ Bot.on('message', function(data) {
     Logger.debug(sourceFile, 'Bot.on(message)', 'Message recieved.  Type: ' + data.type);
 
     // get the user's name
-    if (data.user && data.user != CodeCamp.botData.name.botName) {
+    if (data.user) {
         user = getNameFromId('users', slackUsers, data.user);
+    }
+
+    // bail out if message was posted by our bot
+    if (user == CodeCamp.botData.name.botName) {
+        return;
     }
 
     // get the channel name
@@ -71,9 +82,7 @@ Bot.on('message', function(data) {
     }
 
     // set a local text reference 
-    if (data.text) {
-        message = data.text;
-    }
+    message = data.text;
 
     // send events to CodeCamp module based on message type
     switch (data.type) {
@@ -82,6 +91,8 @@ Bot.on('message', function(data) {
             process.exit(data.error.code);
         case 'hello':
             Logger.info(sourceFile, 'Bot.on(message)', 'Successfully connected to Slack!');
+
+            createBoredomTimer();
             break;
         case 'message':
             // bail out if user is the message sender    
@@ -98,6 +109,7 @@ Bot.on('message', function(data) {
                 }
             }
 
+            createBoredomTimer();
             break;
         case 'presence_change':
             break;
@@ -112,6 +124,15 @@ Bot.on('message', function(data) {
     }
 });
 
+/**
+ * Checks local [users | channels] array for matching id, queries slack server
+ * and updates local array(s) if a matching id is not found.
+ *  * 
+ * @param {*} cache (users || channels)
+ * @param {*} array 
+ * @param {*} id 
+ * @return {string} name
+ */
 function getNameFromId(cache, array, id) {
     var name = searchArray(array, id);
     var list;
@@ -153,7 +174,7 @@ function getNameFromId(cache, array, id) {
 }
 
 /**
- * Scans the local array (slackUsers | slackChannels) for the given ID and 
+ * Scans the local array [slackUsers | slackChannels] for the given ID and 
  * returns the matching name or an empty string if no match found.
  * 
  * @param {Array} array 
@@ -169,6 +190,22 @@ function searchArray(array, id) {
     return '';
 }
 
+// timer for boredom detection
+var boredomTimer = null;
+function boredomHandler() {
+    boredomTimer = setTimeout(boredomHandler, CodeCamp.botData.general.boredomTimer);
+    CodeCamp.bored(Bot);
+}
+
+function createBoredomTimer() {
+    if (null != boredomTimer) {
+        clearTimeout(boredomTimer);
+        boredomTimer = null;
+    }
+
+    boredomTimer = setTimeout(boredomHandler, CodeCamp.botData.general.boredomTimer);
+}
+
 /**
  * Backup and save data and exit the process. 
  */
@@ -177,9 +214,11 @@ function shutdown() {
 
     // backup the bot file first...
     fs.writeFileSync('data/bot.json.bak.' + Date.now(), fs.readFileSync('data/bot.json'));
+    Logger.debug(sourceFile, 'shutdown()', 'data/bot.json file backed up.');
 
     // then save the bot data currently in memory
-    fs.writeFileSync('data/bot.updated.json', data);
+    fs.writeFileSync('data/bot.json', data);
+    Logger.debug(sourceFile, 'shutdown()', 'data/bot.json updated with current data.');
 
     process.exit(0);
 }
@@ -203,25 +242,6 @@ Bot.on('message', function(data) {
         createBoredomTimer();
     }
 });
-
-// timer for boredom detection
-var boredomTimer = null;
-function boredomHandler() {
-    Bot.postMessage(lastChannel, CodeCamp.youAreBored());
-
-    boredomTimer = setTimeout(boredomHandler, 8000);
-}
-
-function createBoredomTimer() {
-    if (null != boredomTimer) {
-        clearTimeout(boredomTimer);
-        boredomTimer = null;
-    }
-
-    if ('' != lastChannel) {
-        boredomTimer = setTimeout(boredomHandler, 8000);
-    }
-}
 
 // bot.on('start', function() {
 //     // bot.postMessageToChannel('general', CodeCampModule.botName + ' reporting...');

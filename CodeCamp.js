@@ -24,6 +24,7 @@ module.exports = {
 
         response = response.replace('${user}', userName);
 
+        botData.general.postCount++;
         Slack.postMessageToChannel(channelName, response);
     },
 
@@ -44,38 +45,44 @@ module.exports = {
             response = '@' + userName + ', are you lost?  Today is ' + days[date.getDay()] + '...';
         }
 
+        botData.general.postCount++;
         Slack.postMessageToChannel(channelName, response);
+    },
+
+    bored: function(Slack) {
+        var channelName = getLastChannel();
+        var date = new Date();
+
+        Logger.debug(sourceFile, 'bored', 'Channel: ' + channelName);
+        
+        botData.history.lastConnect = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+
+        botData.general.postCount++;
+        Slack.postMessageToChannel(channelName, phraseAtRandom(botData.phrases.bored));
     },
 
     logged_in: function(Slack) {
         var response = '';
-        var channelName = botData.history.lastChannel;
+        var channelName = getLastChannel();
 
         botData.history.lastConnect = Date.now();
-
-        // Make sure there is a channel in case the bot has never posted before!
-        if (channelName == '') {
-            channelName = 'general';
-        }
 
         // select a phrase from the bot's data file
         response = phraseAtRandom(botData.phrases.join.login);
 
         // send message to the server
+        botData.general.postCount++;
         Slack.postMessageToChannel(channelName, response);
     },
 
     shutdown_recieved: function(message, channelName, userName, Slack) {
-        var channelName = botData.history.lastChannel;
+        var channelName = getLastChannel();
         var response = phraseAtRandom(botData.phrases.leave.logout);
 
+        botData.general.postCount++;
         Slack.postMessageToUser(userName, 'Kill message recieved, I\'m shutting down now.');
 
-        // Make sure there is a channel in case the bot has never posted before!
-        if (channelName == '') {
-            channelName = 'general';
-        }
-
+        botData.general.postCount++;
         Slack.postMessageToChannel(channelName, response);
     },
 };
@@ -89,3 +96,15 @@ function phraseAtRandom(array) {
     return array[Math.floor(Math.random() * array.length)];
 }
 
+/**
+ * @return {string} Last channel used, or 'general' if none found
+ */
+function getLastChannel() {
+    var channel = botData.history.lastChannel;
+    if (channel == '') {
+        channel = 'general';
+        botData.history.lastChannel = channel;
+    }
+
+    return channel;
+}

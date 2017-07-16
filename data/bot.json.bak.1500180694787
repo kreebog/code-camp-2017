@@ -6,7 +6,7 @@
 	],
 	"killPhrase": "roofus, go chase your tail.",
 	"history": {
-		"lastConnect": 1500180837400,
+		"lastConnect": "",
 		"lastChannel": "jd-testing",
 		"lastMention": {
 			"user": "",
@@ -16,7 +16,7 @@
 	},
 	"general": {
 		"boredomTimer": 15000,
-		"postCount": 91
+		"postCount": 64
 	},
 	"name": {
 		"botName": "roofus",

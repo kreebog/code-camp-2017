@@ -7,7 +7,7 @@ var debugEnabled = true; // when true, debug messages will be logged.
  */
 function getTimeStamp() {
     var dt = new Date();
-    return dt.toLocaleDateString()+ ' ' + dt.toLocaleTimeString();
+    return dt.toLocaleDateString() + ' ' + dt.toLocaleTimeString();
 }
 
 module.exports = {

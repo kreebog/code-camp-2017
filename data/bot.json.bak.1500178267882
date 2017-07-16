@@ -6,7 +6,7 @@
 	],
 	"killPhrase": "roofus, go chase your tail.",
 	"history": {
-		"lastConnect": 1500180837400,
+		"lastConnect": 1500163957311,
 		"lastChannel": "jd-testing",
 		"lastMention": {
 			"user": "",
@@ -15,8 +15,7 @@
 		}
 	},
 	"general": {
-		"boredomTimer": 15000,
-		"postCount": 91
+		"boredomTimer": 15000
 	},
 	"name": {
 		"botName": "roofus",
@@ -63,6 +62,33 @@
 			"That's 28  in dog years, in case you were wondering."
 		]
 	},
+	"personality": {
+		"annoying": 10,
+		"cool": 10,
+		"curious": 10,
+		"honest": 10,
+		"funny": 10,
+		"helpful": 10,
+		"intelligent": 10,
+		"patient": 10,
+		"polite": 10,
+		"wise": 10
+	},
+	"emotionalState": {
+		"angry": 20,
+		"curious": 20,
+		"happy": 20,
+		"lonely": 20,
+		"sad": 20
+	},
+	"communicationStyle": {
+		"spelling": 25,
+		"typos": 50,
+		"typingSpeed": 35,
+		"dictionaries": [
+			"dictionary.json"
+		]
+	},
 	"responses": {
 		"greeting": [
 			"Back at ya, ${user}!",
@@ -77,14 +103,14 @@
 				"Hey, hey, hey!  It's ROOFUS!"
 			],
 			"relogin": "I'm back, baby!",
-			"channel": ":meat_on_bone:Anybody got a Scooby Snack in here?",
+			"channel": "Anybody got a Scooby Snack in here?",
 			"private": "sup?"
 		},
 		"leave": {
 			"logout": [
 				"I'm outta here.",
 				"Gotta run!  I think I hear the mailman coming!!",
-				":cat: Cat! CAT!!! Must chase... must catch it: http://www.nyan.cat/ !!! I'll be back later..."
+				"Cat! CAT!!!  Must.Chase.Cat.  Bye!"
 			],
 			"channel": "Man, this place is lame.  Gonna go find a game of fetch."
 		},
@@ -93,20 +119,42 @@
 			"You called?",
 			"Woof!"
 		],
-		"deepThoughts": [
-			"When they ship styrofoam, what do they pack it in?",
-			"If a Smurf starts choking, what color would it turn?",
-			"If you make a cow laugh, does milk come out its nose?"
-		],
-		"bored": [
-			"Anybody seen that cat running around?  He looks like this - http://www.nyan.cat/",
-			":dog:WOOF! WOOF!:dog:",
-			"Anybody want to play fetch? :tennis:",
-			":rage:*GROWWWWWLLL* I'm getting bored.",
-			"ENTERTAIN ME, HUMAN!",
-			"Hello?",
-			"Anybody there?",
-			"Somebody say something..."
-		]
+		"idle": {
+			"angry": [
+				"Grrrrrrrrrrrrrrrr...",
+				"Don't make me bite you.",
+				"GRRRRRRRRRRR!"
+			],
+			"bored": [
+				"WOOF! WOOF!",
+				"Anybody want to play fetch?",
+				"*GROWWWWWLLL* I'm getting bored.",
+				"ENTERTAIN ME, HUMAN!"
+			],
+			"curious": [
+				"When they ship styrofoam, what do they pack it in?",
+				"If a Smurf starts choking, what color would it turn?",
+				"If you make a cow laugh, does milk come out its nose?"
+			],
+			"happy": [
+				"Yap!",
+				"This is fun!",
+				"Yip!",
+				"Yip yip!",
+				"*HOWWLLLLL*"
+			],
+			"lonely": [
+				"Hello?",
+				"woof.",
+				"woof!",
+				"Anybody there?",
+				"Somebody say something..."
+			],
+			"sad": [
+				"I need to be petted.",
+				"*whimper*",
+				"*whine*"
+			]
+		}
 	}
 }

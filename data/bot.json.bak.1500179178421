@@ -6,13 +6,17 @@
 	],
 	"killPhrase": "roofus, go chase your tail.",
 	"history": {
-		"lastConnect": 1500164106494,
+		"lastConnect": 1500178256010,
 		"lastChannel": "jd-testing",
 		"lastMention": {
 			"user": "",
 			"message": "",
 			"sentiment": ""
 		}
+	},
+	"general": {
+		"boredomTimer": 15000, 
+		"postCount": 0
 	},
 	"name": {
 		"botName": "roofus",
@@ -123,7 +127,7 @@
 				"GRRRRRRRRRRR!"
 			],
 			"bored": [
-				"WOOF! WOOF!",
+				":dog:WOOF! WOOF!:dog:",
 				"Anybody want to play fetch?",
 				"*GROWWWWWLLL* I'm getting bored.",
 				"ENTERTAIN ME, HUMAN!"
