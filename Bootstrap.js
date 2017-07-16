@@ -62,12 +62,12 @@ Bot.on('message', function(data) {
 
     // get the user's name
     if (data.user && data.user != CodeCamp.botData.name.botName) {
-        user = getUserNameById(data.user);
+        user = getNameFromId('users', slackUsers, data.user);
     }
 
     // get the channel name
     if (data.channel) {
-        channel = getChannelNameById(data.channel);
+        channel = getNameFromId('channels', slackChannels, data.channel);
     }
 
     // set a local text reference 
@@ -88,7 +88,7 @@ Bot.on('message', function(data) {
             if (user != CodeCamp.botData.name.name) {
                 if (message == CodeCamp.botData.killPhrase) {
                     CodeCamp.shutdown_recieved(message, channel, user, Bot);
-                    setTimeout(cleanUpAndExit, 2500);
+                    setTimeout(shutdown, 2500);
                 }
 
                 if (message.indexOf('?') > 0) {
@@ -112,110 +112,67 @@ Bot.on('message', function(data) {
     }
 });
 
-/**
- * If UID/Name match not found in local array, gets full
- * user list from Slack team and updates the array with missing 
- * values. 
- * 
- * @param {*} userId 
- * @return {string} userName (or empty if not found)
- */
-function getUserNameById(userId) {
-    var userName = searchUserArray(userId);
+function getNameFromId(cache, array, id) {
+    var name = searchArray(array, id);
+    var list;
 
-    if (userName == '') {
-        Logger.debug(sourceFile, 'getUserNameById()', 'UserID ' + userId + ' not found in cache.  Updating array...');
+    if (name == '') {
+        Logger.debug(sourceFile, 'getNameById()', 'id [' + id + '] not found in cache.  Updating array...');
 
-        var allUsers = Bot.getUsers();
-        // didn't find the user, so let's refresh the array
-        for (var n = 0; n < allUsers._value.members.length; n++) {
-            var uId = allUsers._value.members[n].id;
-            var uName = allUsers._value.members[n].name;
+        // matching name not found, scan the appriorate array
+        if (cache == 'users') {
+            list = Bot.getUsers();
+        } else if (cache == 'channels') {
+            list = Bot.getChannels();
+        } else {
+            Logger.error(sourceFile, 'getNameById()', new Error('Invalid cache name, try "users" or "channels"'));
+            return '';
+        }
+
+        var subArray = (cache == 'users' ? list._value.members : list._value.channels);
+
+        for (var n = 0; n < subArray.length; n++) {
+            var _id = (cache == 'users' ? list._value.members[n].id : list._value.channels[n].id);
+            var _name = (cache == 'users' ? list._value.members[n].name : list._value.channels[n].name);
 
             // while we're here, add any missing users to the array
-            if (searchUserArray(uId) == '') {
-                slackUsers.push({'id': uId, 'name': uName});
-                Logger.debug(sourceFile, 'getUserNameById()', 'Added user ' + uName + ' (' + uId + ') to cache.');
+            if (searchArray(array, _id) == '') {
+                array.push({'id': _id, 'name': _name});
+                Logger.debug(sourceFile, 'getNameFromId()', 'Added ' + cache + ': Name=' + _name + ', ID=' + _id + ' to cache.');
             }
 
             // check for match and set return value
-            if (uId == userId) {
-                Logger.debug(sourceFile, 'getUserNameById()', 'User Found: ' + uName + ' (' + uId + ')');
-                userName = uName;
+            if (_id == id) {
+                Logger.debug(sourceFile, 'getNameFromId()', cache + ' Found: Name=' + _name + ', ID=' + _id);
+                name = _name;
             }
         }
     }
 
-    return userName;
+    return name;
 }
 
 /**
- * Scans the local slackUsers array for a user with matching ID and returns the user's name
- * @param {*} userId 
- * @return {string} userName (or empty)
- */
-function searchUserArray(userId) {
-    for (var x = 0; x < slackUsers.length; x++) {
-        if (slackUsers[x].id == userId) {
-            return slackUsers[x].name;
-        }
-    }
-    return '';
-}
-
-
-/**
- * Scans the local slackUsers array for a user with matching ID and returns the user's name
- * @param {*} userId 
- * @return {string} userName (or empty)
- */
-function searchChannelArray(userId) {
-    for (var x = 0; x < slackChannels.length; x++) {
-        if (slackChannels[x].id == userId) {
-            return slackChannels[x].name;
-        }
-    }
-    return '';
-}
-
-/**
- * If CID/Name match not found in local array, gets full
- * channel list from Slack team and updates the array with missing 
- * values. 
+ * Scans the local array (slackUsers | slackChannels) for the given ID and 
+ * returns the matching name or an empty string if no match found.
  * 
- * @param {*} channelId 
- * @return {string} channelName (or empty if not found)
+ * @param {Array} array 
+ * @param {string} id 
+ * @return {string} name (or empty)
  */
-function getChannelNameById(channelId) {
-    var channelName = searchChannelArray(channelId);
-
-    if (channelName == '') {
-        Logger.debug(sourceFile, 'getChannelNameById()', 'channelID ' + channelId + ' not found in cache.  Updating array...');
-
-        var allChannels = Bot.getChannels();
-        // didn't find the channel, so let's refresh the array
-        for (var n = 0; n < allChannels._value.channels.length; n++) {
-            var cId = allChannels._value.channels[n].id;
-            var cName = allChannels._value.channels[n].name;
-
-            // while we're here, add any missing channels to the array
-            if (searchChannelArray(cId) == '') {
-                slackChannels.push({'id': cId, 'name': cName});
-                Logger.debug(sourceFile, 'getChannelNameById()', 'Added channel ' + cName + ' (' + cId + ') to cache.');
-            }
-
-            // check for match and set return value
-            if (cId == channelId) {
-                Logger.debug(sourceFile, 'getChannelNameById()', 'Channel Found: ' + cName + ' (' + cId + ')');
-                channelName = cName;
-            }
+function searchArray(array, id) {
+    for (var x = 0; x < array.length; x++) {
+        if (array[x].id == id) {
+            return array[x].name;
         }
     }
-
-    return channelName;
+    return '';
 }
 
-function cleanUpAndExit() {
+/**
+ * Backup and save data and exit the process. 
+ */
+function shutdown() {
     var data = JSON.stringify(CodeCamp.botData, null, '\t');
 
     // backup the bot file first...
